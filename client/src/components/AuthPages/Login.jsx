@@ -5,15 +5,24 @@ import Grid from "@mui/material/Grid2";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardActions from "@mui/material/CardActions";
+import { useDispatch, useSelector } from "react-redux";
+import { loginWithCredentials } from "../../redux/slices/AuthSlice";
 
 
 
 const Login = (props) => {
 
+    const dispatch = useDispatch();
+
     const { register, control, handleSubmit, formState: { errors } } = useForm();
 
     const onSubmit = (model) => {
         console.log(model);
+        const data = {
+            email: model.email,
+            password: model.password,
+        }
+        dispatch(loginWithCredentials(data));
     }
 
     return (
@@ -49,12 +58,6 @@ const Login = (props) => {
                                         <Controller
                                             name="password"
                                             control={control}
-                                            rules={{
-                                                minLength: {
-                                                    value: 8,
-                                                    message: "Password must be at least 8 characters long"
-                                                }
-                                            }}
                                             render={({ field }) => (
                                                 <TextField
                                                     {...field}
@@ -62,8 +65,6 @@ const Login = (props) => {
                                                     label="Password"
                                                     type="password"
                                                     fullWidth
-                                                    error={!!errors.password} // Shows the error state on the TextField
-                                                    helperText={errors.password?.message} // Displays the error message below the TextField
                                                 />
                                             )}
                                         />
