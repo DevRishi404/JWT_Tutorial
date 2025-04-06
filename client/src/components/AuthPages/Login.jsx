@@ -8,14 +8,16 @@ import CardActions from "@mui/material/CardActions";
 import { useDispatch, useSelector } from "react-redux";
 import { loginWithCredentials } from "../../redux/slices/AuthSlice";
 import ShowSnackBar from "../ReusableComponents/ShowSnackbar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 const Login = (props) => {
 
+    const token = localStorage.getItem("accessToken");
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const { token, isLoading, error } = useSelector((state) => state.auth);
+    const { isLoading, error } = useSelector((state) => state.auth);
     const { register, control, handleSubmit, formState: { errors } } = useForm();
 
     const [snackbar, setSnackbar] = useState(false);
@@ -25,6 +27,12 @@ const Login = (props) => {
             setSnackbar(true);
         }
     }, [error])
+
+    useEffect(() => {
+        if(token) {
+            navigate('/', {replace: true});
+        }
+    }, [token]);
 
     const onSubmit = (model) => {
         console.log(model);
