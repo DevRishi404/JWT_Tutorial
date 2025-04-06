@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -7,14 +7,24 @@ import CardContent from '@mui/material/CardContent';
 import CardActions from "@mui/material/CardActions";
 import { useDispatch, useSelector } from "react-redux";
 import { loginWithCredentials } from "../../redux/slices/AuthSlice";
-
+import ShowSnackBar from "../ReusableComponents/ShowSnackbar";
+import { Link } from "react-router-dom";
 
 
 const Login = (props) => {
 
     const dispatch = useDispatch();
 
+    const { token, isLoading, error } = useSelector((state) => state.auth);
     const { register, control, handleSubmit, formState: { errors } } = useForm();
+
+    const [snackbar, setSnackbar] = useState(false);
+
+    useEffect(() => {
+        if (error) {
+            setSnackbar(true);
+        }
+    }, [error])
 
     const onSubmit = (model) => {
         console.log(model);
@@ -22,13 +32,25 @@ const Login = (props) => {
             email: model.email,
             password: model.password,
         }
+
         dispatch(loginWithCredentials(data));
     }
+
+    const loading = () => {
+        return (
+            <p>Loading...</p>
+        )
+    }
+
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') return;
+        setSnackbar(false);
+    };
 
     return (
         <>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: 20 }}>
                     <Card variant="elevation" raised={true}>
                         <CardContent>
                             <Box>
@@ -58,6 +80,9 @@ const Login = (props) => {
                                         <Controller
                                             name="password"
                                             control={control}
+                                            rules={{ 
+                                                required: "Password is required" 
+                                            }}
                                             render={({ field }) => (
                                                 <TextField
                                                     {...field}
@@ -71,7 +96,10 @@ const Login = (props) => {
 
                                     </Grid>
                                     <CardActions sx={{ display: "flex", justifyContent: "center", width: "100%", padding: 0, marginTop: 2 }}>
-                                        <Button variant="contained" type="submit" fullWidth>Submit</Button>
+                                        {
+                                            isLoading ? loading() :
+                                                <Button variant="contained" type="submit" fullWidth>Submit</Button>
+                                        }
                                     </CardActions>
                                 </Grid>
                             </Box>
@@ -79,6 +107,10 @@ const Login = (props) => {
                     </Card>
                 </Box>
             </form>
+            <Box sx={{marginTop: 5}}>
+                <Typography align="center" variant="body1">New? <Link to='/register' >Register here</Link> </Typography>
+            </Box>
+            <ShowSnackBar open={snackbar} message={error} onClose={handleSnackbarClose} />
         </>
     )
 }

@@ -38,13 +38,13 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
         const user = await users.findOne({ email });
 
         if (!user) {
-            return res.status(404).send({ message: "User not found" });
+            return res.status(400).send({ message: "User not found" });
         }
 
         const isPasswordValid = await checkPassword(password, user.password);
 
         if (!isPasswordValid) {
-            return res.status(401).send({ message: "Invalid Password" });
+            return res.status(400).send({ message: "Invalid Password" });
         }
 
         const accessToken = jwt.sign({ email }, process.env.JWT_ACCESS_KEY as string, { expiresIn: "15m" });
@@ -75,13 +75,13 @@ router.post("/refresh", async (req: Request, res: Response): Promise<any> => {
 
         const refreshTokenDb = await refreshTokens.findOne({ refreshToken });
         if (!refreshTokenDb) {
-            return res.status(403).send({ message: "Invalid refresh token, Please login again" });
+            return res.status(401).send({ message: "Invalid refresh token, Please login again" });
         }
 
         jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY as string, async (err: any, decoded: any) => {
             if (err) {
                 await refreshTokens.deleteOne({ refreshToken });
-                return res.status(403).send({ message: "Invalid refresh token, Please login again" });
+                return res.status(401).send({ message: "Invalid refresh token, Please login again" });
             }
 
             const accessToken = jwt.sign({ email: decoded.email }, process.env.JWT_ACCESS_KEY as string, { expiresIn: "15m" });
