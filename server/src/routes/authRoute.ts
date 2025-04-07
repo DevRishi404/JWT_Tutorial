@@ -117,6 +117,6 @@ router.post("/logout", async (req: Request, res: Response): Promise<any> => {
     } catch (e) {
         console.log("error in logout", e);
     }
-})
+});
 
 export default router;

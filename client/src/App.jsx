@@ -5,6 +5,7 @@ import Register from './components/AuthPages/Register';
 import axios from 'axios';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Home from './components/HomePage/Home';
+import { useSelector } from 'react-redux';
 
 
 axios.interceptors.request.use(
@@ -37,7 +38,8 @@ axios.interceptors.response.use(
 
 function ProtectedRoute({ children }) {
   const navigate = useNavigate();
-  const token = localStorage.getItem("accessToken");
+  const { token } = useSelector((state) => state.auth);
+  // const token = localStorage.getItem("accessToken");
 
   useEffect(() => {
     if (!token) {

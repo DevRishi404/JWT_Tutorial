@@ -6,10 +6,6 @@ import jwt from "jsonwebtoken";
 
 dotenv.config();
 
-interface AuthHeader extends Request {
-    user?: any,
-}
-
 let client: MongoClient;
 
 export const connectDb = async () => {
@@ -53,23 +49,24 @@ export const checkPassword = async (password: string, hashedPassword: string) =>
     }
 }
 
-export const verifyToken = (req: AuthHeader, res: Response, next: NextFunction) => {
-    try {
-        const authHeader = req.headers['authorization'];
-        if (authHeader) {
-            const token = authHeader.split(' ')[1];
-
-            jwt.verify(token, process.env.JWT_ACCESS_SECRET as string, (err, decoded) => {
-                if (err) {
-                    return res.status(403).json({ message: "Forbidden: Invalid token" });
-                }
-
-                req.user = decoded;
-                next();
-            })
-        }
-    } catch (e) {
-        console.error("Token verification error:", e);
-        return res.status(500).json({ message: "Internal Server Error" });
+export const verifyToken = (req: Request, res: Response, next: NextFunction): void => {
+    const authHeader = req.headers['authorization'];
+  
+    if (!authHeader) {
+      res.status(401).json({ message: "Unauthorized: No token provided" });
+      return;
     }
-}
+  
+    const token = authHeader.split(' ')[1];
+  
+    jwt.verify(token, process.env.JWT_ACCESS_SECRET as string, (err, decoded) => {
+      if (err) {
+        res.status(403).json({ message: "Forbidden: Invalid token" });
+        return;
+      }
+  
+      // Attach user to request
+      (req as any).user = decoded;
+      next();
+    });
+  };

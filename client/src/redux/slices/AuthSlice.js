@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const token = localStorage.getItem("accessToken");
+
 export const loginWithCredentials = createAsyncThunk("login", async (data, { rejectWithValue }) => {
     try {
         const response = await axios.post("http://localhost:8000/auth/login", JSON.stringify(data));
@@ -38,7 +40,7 @@ export const registerWithCredentials = createAsyncThunk("register", async (data,
 const initialState = {
     isLoading: false,
     user: {},
-    token: null,
+    token: token ? token : null,
     error: null,
     success: null
 }
@@ -59,6 +61,7 @@ export const AuthSlice = createSlice({
             .addCase(loginWithCredentials.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.token = action.payload.accessToken;
+                localStorage.setItem("accessToken", action.payload.accessToken);
             })
             .addCase(loginWithCredentials.rejected, (state, action) => {
                 state.isLoading = false;
