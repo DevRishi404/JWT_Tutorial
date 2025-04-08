@@ -52,7 +52,7 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
 
         await refreshTokens.insertOne({ refreshToken })
 
-        res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true, sameSite: "strict" });
+        res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true, sameSite: "none" });
 
         return res.status(200).send({ accessToken });
     } catch (e) {

@@ -1,9 +1,11 @@
 import express from "express";
-import authRoute from "./routes/authRoute";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from 'cookie-parser'
 dotenv.config();
+
+import authRoute from "./routes/authRoute";
+import productsRoute from "./routes/productsRoute"
 
 const app = express();
 
@@ -16,6 +18,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
 
 app.use("/auth", authRoute);
+app.use("/products", productsRoute);
 
 const PORT = process.env.PORT || 8001;
 

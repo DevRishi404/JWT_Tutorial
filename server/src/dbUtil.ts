@@ -57,16 +57,16 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction): vo
       return;
     }
   
-    const token = authHeader.split(' ')[1];
+    const token = authHeader.split(' ')[1].trim();
   
-    jwt.verify(token, process.env.JWT_ACCESS_SECRET as string, (err, decoded) => {
+    jwt.verify(token, process.env.JWT_ACCESS_KEY as string, (err, decoded) => {
       if (err) {
         res.status(403).json({ message: "Forbidden: Invalid token" });
         return;
       }
   
       // Attach user to request
-      (req as any).user = decoded;
+      (req as any).email = decoded;
       next();
     });
   };

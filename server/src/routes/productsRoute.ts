@@ -4,17 +4,20 @@ import { verifyToken, connectDb } from "../dbUtil";
 
 const router = Router();
 
-router.get('/getProductsList', verifyToken, async (req: Request, res: Response) : Promise<any> => {
+router.get('/getProductsList', verifyToken, async (req: Request, res: Response) : Promise<void> => {
     try {
         const dbConn = await connectDb();
-        if(!dbConn) return res.status(500).send({message: "Connection to database failed"});
+        if(!dbConn) {
+            res.status(500).send({message: "Connection to database failed"});
+            return;
+        }
 
         const db = dbConn.db("TUTORIAL");
         const products = db.collection("products");
 
-        const list = await products.find({});
+        const list = await products.find({}).toArray();
 
-        res.status(200).send({message: "list successfull", list})
+        res.status(200).send({message: "list successfull", list});
     } catch(e) {
         console.log(e);
     }
