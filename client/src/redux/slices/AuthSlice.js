@@ -5,7 +5,9 @@ const token = localStorage.getItem("accessToken");
 
 export const loginWithCredentials = createAsyncThunk("login", async (data, { rejectWithValue }) => {
     try {
-        const response = await axios.post("http://localhost:8000/auth/login", JSON.stringify(data));
+        const response = await axios.post("http://localhost:8000/auth/login", JSON.stringify(data), {
+            withCredentials: true
+        });
 
         if (response.status === 200) {
             return { accessToken: response.data.accessToken }; // Return token as the payload

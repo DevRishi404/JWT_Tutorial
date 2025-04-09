@@ -47,12 +47,12 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
             return res.status(400).send({ message: "Invalid Password" });
         }
 
-        const accessToken = jwt.sign({ email }, process.env.JWT_ACCESS_KEY as string, { expiresIn: "15m" });
+        const accessToken = jwt.sign({ email }, process.env.JWT_ACCESS_KEY as string, { expiresIn: "15s" });
         const refreshToken = jwt.sign({ email }, process.env.JWT_REFRESH_KEY as string, { expiresIn: "7d" });
 
         await refreshTokens.insertOne({ refreshToken })
 
-        res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true, sameSite: "none" });
+        res.cookie("refreshToken", refreshToken);
 
         return res.status(200).send({ accessToken });
     } catch (e) {

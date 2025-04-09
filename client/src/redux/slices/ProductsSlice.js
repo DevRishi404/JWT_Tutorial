@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, combineSlices } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const getProductsList = createAsyncThunk("getProductsList", async ({ rejectWithValue }) => {
+export const getProductsList = createAsyncThunk("getProductsList", async (_, { rejectWithValue }) => {
     try {
         const response = await axios.get("http://localhost:8000/products/getProductsList");
 
@@ -12,7 +12,6 @@ export const getProductsList = createAsyncThunk("getProductsList", async ({ reje
         }
     } catch (error) {
         return rejectWithValue(response.data.message);
-        debugger
     }
 })
 

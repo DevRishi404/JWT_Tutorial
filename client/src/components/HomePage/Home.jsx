@@ -17,7 +17,7 @@ const Home = () => {
         if (productsList) {
             setProducts(productsList);
         }
-    }, [products])
+    }, [productsList])
 
     return (
         <>

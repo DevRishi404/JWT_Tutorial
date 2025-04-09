@@ -33,6 +33,11 @@ axios.interceptors.response.use(
     return response;
   }, (error) => {
     console.log("response config error", error);
+
+    if (err.status === 401) {
+
+    }
+
     return Promise.reject(error);
   })
 
@@ -43,7 +48,7 @@ function ProtectedRoute({ children }) {
 
   useEffect(() => {
     if (!token) {
-      return navigate('/login', {replace: true});
+      return navigate('/login', { replace: true });
     }
   }, [navigate, token])
 
