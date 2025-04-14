@@ -31,11 +31,20 @@ axios.interceptors.response.use(
       localStorage.setItem("accessToken", response.data.accessToken);
     }
     return response;
-  }, (error) => {
+  }, async (error) => {
     console.log("response config error", error);
 
-    if (err.status === 401) {
-
+    if (error.response.status === 401) {
+      try {
+        const response = await axios.post("http://localhost:8000/auth/refresh", {}, {withCredentials: true});
+        const token = response.data.accessToken
+        localStorage.setItem('accessToken', token);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      } catch (e) {
+        
+        localStorage.removeItem("accessToken");
+        window.location.href = "/login";
+      }
     }
 
     return Promise.reject(error);
