@@ -39,6 +39,23 @@ export const registerWithCredentials = createAsyncThunk("register", async (data,
     }
 })
 
+export const logoutUser = createAsyncThunk("logout", async (data, {rejectWithValue}) => {
+    try {
+        const response = await axios.post("http://localhost:8000/auth/logout", {}, {
+            withCredentials: true
+        });
+
+        if (response.status === 200) {
+            localStorage.removeItem("accessToken");
+            return response.data.message;
+        } else {
+            return rejectWithValue(response.data.message);
+        }
+    } catch ({response}) {
+        return rejectWithValue(response.data.message);
+    }
+})
+
 const initialState = {
     isLoading: false,
     user: {},
@@ -79,6 +96,14 @@ export const AuthSlice = createSlice({
             .addCase(registerWithCredentials.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload;
+            })
+            .addCase(logoutUser.pending, (state, action) => {
+                state.isLoading = true;
+            })
+            .addCase(logoutUser.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.token = null;
+                localStorage.removeItem("accessToken");
             })
         }
 })

@@ -110,7 +110,7 @@ router.post("/logout", async (req: Request, res: Response): Promise<any> => {
 
         await refreshTokens.deleteOne({ refreshToken });
 
-        res.clearCookie('refreshToken', { httpOnly: true, secure: true, sameSite: "strict" });
+        res.clearCookie('refreshToken');
 
         return res.status(200).send({ message: "Logged out successfully" });
 
